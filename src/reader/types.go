@@ -34,6 +34,8 @@ type TPV struct {
 type SKY struct {
 	Class string `json:"class"` // Here, "SKY"
 
+	Time time.Time
+
 	// The DOPs are "dimensionless factors which should be multiplied by a base UERE to get an error estimate"
 	GDOP float64 `json:"gdop"` // Geometric (hyperspherical) dilution of precision, a combination of PDOP and TDOP
 	HDOP float64 `json:"hdop"` // Horizontal dilution of precision
@@ -47,7 +49,5 @@ type SKY struct {
 }
 
 type Satellite struct {
-	GNSSID int  `json:"gnssid"` // 0=GPS, 2=Galileo, 3=Beidou, 5=QZSS, 6=GLONASS
-	PRN    int  `json:"PRN"`    // 1-63=GPS, 64-96=GLONASS, 100-164=SBAS
-	Used   bool `json:"used"`   // This satellite is used in current solution
+	GNSSID int `json:"gnssid"` // 0=GPS, 2=Galileo, 3=Beidou, 5=QZSS, 6=GLONASS
 }
