@@ -1,14 +1,26 @@
 package exporter
 
 import (
+	"fmt"
 	"github.com/kahara/go-gnssaggr/src/aggregator"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"github.com/rs/zerolog/log"
+	"net/http"
 )
 
-func Export(aggregations <-chan aggregator.Aggregation) {
+func Export(config Config, aggregations <-chan aggregator.Aggregation) {
 	var (
+		err         error
+		addr        = fmt.Sprintf(":%d", config.Port)
 		aggregation aggregator.Aggregation
 	)
+
+	go func() {
+		http.Handle("/metrics", promhttp.Handler())
+		if err = http.ListenAndServe(addr, nil); err != nil {
+			log.Fatal().Err(err).Msgf("Could not start listening on %s", addr)
+		}
+	}()
 
 	for {
 		select {

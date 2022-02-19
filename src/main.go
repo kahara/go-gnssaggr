@@ -23,14 +23,19 @@ func main() {
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 
 	// FIXME read host and port from command line
-	config := reader.Config{
+	readerConfig := reader.Config{
 		Host: "green.lan",
 		Port: 2947,
 	}
 
-	go reader.Read(config, reports)
+	// FIXME read port from command line
+	exporterConfig := exporter.Config{
+		Port: 9101,
+	}
+
+	go reader.Read(readerConfig, reports)
 	go aggregator.Aggregate(reports, aggregates)
-	go exporter.Export(aggregates)
+	go exporter.Export(exporterConfig, aggregates)
 
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	select {
