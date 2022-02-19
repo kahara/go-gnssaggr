@@ -25,7 +25,12 @@ func Export(config Config, aggregations <-chan aggregator.Aggregation) {
 	for {
 		select {
 		case aggregation = <-aggregations:
-			log.Printf("%+v", aggregation)
+			switch aggregation.(type) {
+			case aggregator.TPV:
+				log.Printf("tpv %+v", aggregation)
+			case aggregator.SKY:
+				log.Printf("sky %+v", aggregation)
+			}
 		}
 	}
 }

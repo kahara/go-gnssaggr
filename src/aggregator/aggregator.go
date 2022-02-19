@@ -70,9 +70,9 @@ func aggregateTPVs(tpvs <-chan reader.TPV, aggregates chan<- Aggregation) {
 				}
 
 				for _, key := range []string{"EPT", "Lon", "Lat", "AltHAE", "AltMSL", "EPX", "EPY", "EPV"} {
-					aggregates <- func(key string) Aggregation {
+					aggregates <- func(key string) TPV {
 						var (
-							aggregation Aggregation = Aggregation{
+							aggregation TPV = TPV{
 								Time: tpv[0].Time,
 								Key:  key,
 							}
@@ -114,10 +114,30 @@ func aggregateTPVs(tpvs <-chan reader.TPV, aggregates chan<- Aggregation) {
 
 // SKY (sky view) reports are massaged and passed to exporter as they come in, without collecting.
 func aggregateSKYs(skys <-chan reader.SKY, aggregates chan<- Aggregation) {
+	var (
+		aggregation SKY
+	)
+
 	for {
 		select {
 		case sky := <-skys:
-			log.Printf("%+v", sky)
+			aggregation = SKY{
+				Time:   sky.Time,
+				GDOP:   sky.GDOP,
+				HDOP:   sky.HDOP,
+				PDOP:   sky.PDOP,
+				TDOP:   sky.TDOP,
+				VDOP:   sky.VDOP,
+				XDOP:   sky.XDOP,
+				YDOP:   sky.YDOP,
+				GNSSID: map[int]int{},
+			}
+
+			for _, satellite := range sky.Satellites {
+				aggregation.GNSSID[satellite.GNSSID] += 1
+			}
+
+			aggregates <- aggregation
 		}
 	}
 }
