@@ -64,7 +64,7 @@ func aggregateTPVs(tpvs <-chan reader.TPV, aggregates chan<- Aggregation) {
 				// Check that there's a report for each second of current minute
 				for _, x := range tpv {
 					if reflect.DeepEqual(x, reader.TPV{}) {
-						log.Printf("Incomplete set of TPV reports for this minute, skipping: %+v", tpv)
+						log.Printf("Incomplete set of TPV reports for this minute, skipping")
 						goto cleanup
 					}
 				}
