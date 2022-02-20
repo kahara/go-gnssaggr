@@ -11,29 +11,30 @@ type Report interface{}
 
 // https://gpsd.gitlab.io/gpsd/gpsd_json.html#_tpv
 type TPV struct {
-	Class string `json:"class"`
+	Class string `json:"class"` // Here, "TPV"
 
 	// Time
 	Time        time.Time `json:"time"`
 	LeapSeconds float64   `json:"leapseconds"`
-	EPT         float64   `json:"ept"`
+	EPT         float64   `json:"ept"` // Estimated time stamp error in seconds
 
 	// Position
-	Lon      float64 `json:"lon"`
-	Lat      float64 `json:"lat"`
-	AltHAE   float64 `json:"altHAE"`
-	AltMSL   float64 `json:"altMSL"`
-	GeoidSep float64 `json:"geoidSep"`
+	Lon    float64 `json:"lon"`    // Longitude in degrees: +/- signifies East/West
+	Lat    float64 `json:"lat"`    // Latitude in degrees: +/- signifies North/South
+	AltHAE float64 `json:"altHAE"` // Altitude, height above ellipsoid, in meters. Probably WGS84.
+	AltMSL float64 `json:"altMSL"` // MSL Altitude in meters. The geoid used is rarely specified and is often inaccurate.
 
 	// Position error
-	EPX float64 `json:"epx"`
-	EPY float64 `json:"epy"`
-	EPV float64 `json:"epv"`
+	EPX float64 `json:"epx"` // Longitude error estimate in meters
+	EPY float64 `json:"epy"` // Latitude error estimate in meters
+	EPV float64 `json:"epv"` // Estimated vertical error in meters
 }
 
 // https://gpsd.gitlab.io/gpsd/gpsd_json.html#_sky
 type SKY struct {
-	Class string `json:"class"`
+	Class string `json:"class"` // Here, "SKY"
+
+	Time time.Time
 
 	// The DOPs are "dimensionless factors which should be multiplied by a base UERE to get an error estimate"
 	GDOP float64 `json:"gdop"` // Geometric (hyperspherical) dilution of precision, a combination of PDOP and TDOP
@@ -48,7 +49,5 @@ type SKY struct {
 }
 
 type Satellite struct {
-	GNSSID int // 0=GPS, 2=Galileo, 3=Beidou, 5=QZSS, 6=GLONASS
-	PRN    int // 1-63=GPS, 64-96=GLONASS, 100-164=SBAS
-	Used   bool
+	GNSSID int `json:"gnssid"` // 0=GPS, 2=Galileo, 3=Beidou, 5=QZSS, 6=GLONASS
 }

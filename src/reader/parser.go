@@ -2,6 +2,7 @@ package reader
 
 import (
 	"encoding/json"
+	"time"
 )
 
 func parser(lines <-chan []byte, reports chan<- Report) {
@@ -20,6 +21,7 @@ func parser(lines <-chan []byte, reports chan<- Report) {
 				// Try a SKY report
 				if err = json.Unmarshal(line, &sky); err == nil && sky.Class == "SKY" {
 					// This is a valid SKY report
+					sky.Time = time.Now()
 					reports <- sky
 				}
 			} else {

@@ -13,8 +13,8 @@ const (
 	backoffDefault       = 1.0
 	backoffMultiplier    = 1.35
 	backoffLimit         = 20
-	backoffWhenConnected = time.Duration(5 * time.Second) // Sleep fixed amount of time when errors happen after connecting
-	trigger              = "?WATCH={\"enable\":true,\"json\":true}\n"
+	backoffWhenConnected = time.Duration(5 * time.Second)             // Sleep fixed amount of time when errors happen after connecting
+	trigger              = "?WATCH={\"enable\":true,\"json\":true}\n" // https://gpsd.gitlab.io/gpsd/gpsd_json.html#_watch
 )
 
 func Read(config Config, reports chan<- Report) {
@@ -71,8 +71,6 @@ func Read(config Config, reports chan<- Report) {
 				if lineHash != prevHash {
 					lines <- line
 					prevHash = lineHash
-				} else {
-					log.Printf("DUP! %+v %s", lineHash, line)
 				}
 			} else {
 				log.Error().Err(scanner.Err()).Msgf("Error while scanning lines from %s, sleeping for %fs before starting over", hostport, backoffWhenConnected.Seconds())

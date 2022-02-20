@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"github.com/kahara/go-gnssaggr/src/aggregator"
 	"github.com/kahara/go-gnssaggr/src/exporter"
 	"github.com/kahara/go-gnssaggr/src/reader"
@@ -22,15 +23,24 @@ func main() {
 
 	zerolog.TimeFieldFormat = time.RFC3339Nano
 
-	// FIXME read host and port from command line
-	config := reader.Config{
-		Host: "green.lan",
-		Port: 2947,
+	// Command line arguments
+	gpsdHost := flag.String("host", "localhost", "gpsd host")
+	gpsdPort := flag.Uint("port", 2947, "gpsd port")
+	prometheusPort := flag.Uint("promport", 9100, "Prometheus exporter port")
+	flag.Parse()
+
+	readerConfig := reader.Config{
+		Host: *gpsdHost,
+		Port: uint16(*gpsdPort),
 	}
 
-	go reader.Read(config, reports)
+	exporterConfig := exporter.Config{
+		Port: uint16(*prometheusPort),
+	}
+
+	go reader.Read(readerConfig, reports)
 	go aggregator.Aggregate(reports, aggregates)
-	go exporter.Export(aggregates)
+	go exporter.Export(exporterConfig, aggregates)
 
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	select {
