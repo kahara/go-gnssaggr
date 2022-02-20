@@ -8,6 +8,12 @@ import (
 	"net/http"
 )
 
+const (
+	MetricPrefix = "gnssaggr"
+	TPVPrefix    = "tpv"
+	SKYPrefix    = "sky"
+)
+
 func Export(config Config, aggregations <-chan aggregator.Aggregation) {
 	var (
 		err         error
