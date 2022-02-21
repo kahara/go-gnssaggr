@@ -6,6 +6,17 @@ In order to be able to monitor my local GNSS environment, aggregate
 reports for consumption by
 [Prometheus](https://prometheus.io/docs/instrumenting/writing_exporters/#metrics).
 
+## Building
+
+Have
+[Buildx](https://docs.docker.com/buildx/working-with-buildx/),
+then:
+
+```console
+docker buildx create --name gnssaggr && docker buildx use gnssaggr && docker buildx inspect --bootstrap
+docker buildx bake --push --file ./build.hcl
+```
+
 ## Running
 
 FIXME link to Docker image
