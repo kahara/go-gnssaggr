@@ -69,7 +69,9 @@ func Read(config Config, reports chan<- Report) {
 				// Skip consecutive duplicates
 				lineHash = xxhash.Sum64(line)
 				if lineHash != prevHash {
-					lines <- line
+					lineCopy := make([]byte, len(line))
+					copy(lineCopy, line)
+					lines <- lineCopy
 					prevHash = lineHash
 				}
 			} else {
